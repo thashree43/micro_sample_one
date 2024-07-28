@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const commentsByPostId = {};  // Renamed for clarity
+const commentsByPostId = {}; 
 
 app.get("/post/:id/comments", (req, res) => {
     console.log('Sending comments:', commentsByPostId[req.params.id] || []);
@@ -20,7 +20,7 @@ app.post("/post/:id/comments", async (req, res) => {
     console.log("Received comment content:", content);
 
     const comments = commentsByPostId[req.params.id] || [];
-    comments.push({ id: commentId, content, status: "pending" });  // Added status field
+    comments.push({ id: commentId, content, status: "pending" }); 
     commentsByPostId[req.params.id] = comments;
 
     try {
@@ -41,8 +41,31 @@ app.post("/post/:id/comments", async (req, res) => {
     res.status(201).send(comments);
 });
 
-    app.post('/events', (req, res) => {
+    app.post('/events', async(req, res) => {
         console.log("Event received in comments:", req.body.type);
+        const {type ,data} = req.body
+
+        if(type === "commentmoderation"){
+            const {postId,id,status,content} = data
+            const comments = commentsByPostId[postId]
+
+            const comment = comments.find(comment =>{
+                return comment.id === id
+            })
+
+            comment.status = status
+            await axios.post("http:/localhost:6995",{
+                type :"commentupdated",
+                postId,
+                id,
+                status,
+                content
+            })
+
+                    console.log("after this comment moderation the status be like this ",status);
+
+        } 
+
         res.send({});
     });
 

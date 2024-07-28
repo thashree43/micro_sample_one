@@ -10,7 +10,7 @@ function Postslists() {
     console.log(post,"posts may ");
     const fetchdata = async () => {
         try {
-            const res = await axios.get('http://localhost:7000 /post');
+            const res = await axios.get('http://localhost:7001/post');
             setPost(res.data);
             console.log(res,"res data");
         } catch (error) {
@@ -29,7 +29,7 @@ function Postslists() {
                 {Object.entries(post).map(([id, posts]) => (
                     <li key={id}>
                         <h2>{posts.title}</h2>
-                        <Commentlists postId={posts.id} /> 
+                        <Commentlists comments={posts.comments} /> 
                         <Commentscreate postId={posts.id} />
                     </li>
                 ))}

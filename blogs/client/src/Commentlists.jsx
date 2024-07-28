@@ -1,32 +1,28 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-function Commentlists({ postId }) {
-    const [comments, setComments] = useState([]);
+function Commentlists({ comments }) {
+    console.log("The comment list from command list", comments);
 
-    console.log(comments, "checking");
-
-    const fetchComments = async () => {
-        try {
-            const res = await axios.get(`http://localhost:7004/post/${postId}/comments`);
-            console.log(res.data, 'resres');
-            const data = Array.isArray(res.data) ? res.data : Object.values(res.data);
-            setComments(data);
-        } catch (error) {
-            console.error("Error occurred:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchComments();
-    }, [postId]); // Add postId to the dependency array
+    if (!Array.isArray(comments)) {
+        comments = [];
+    }
 
     return (
         <div>
             <ul>
-                {comments.map((comment) => (
-                    <li key={comment.id}>{comment.content}</li> // Ensure each item has a unique key
-                ))}
+                {comments.map(comment => {
+                    let contentToShow;
+
+                    if (comment.status === "rejected") {
+                        contentToShow = "Comment has been rejected";
+                    } else if (comment.status === "pending") {
+                        contentToShow = "The comment is now in pending state";
+                    } else {
+                        contentToShow = `${comment.content} - ${comment.status}`;
+                    }
+
+                    return <li key={comment.id}>{contentToShow}</li>;
+                })}
             </ul>
         </div>
     );

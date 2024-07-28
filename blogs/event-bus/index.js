@@ -9,7 +9,10 @@ app.post("/events", async (req, res) => {
   console.log( "the events from the event-bus",event);
   try {
     await axios.post("http://localhost:7000/events", event);
-    await axios.post("http://localhost:7004/events", event);  
+    await axios.post("http://localhost:7001/events", event);
+    await axios.post("http://localhost:7003/events", event);
+    await axios.post("http://localhost:7004/events", event); 
+
   } catch (error) {
     console.error("Error posting event:", error);
   }
