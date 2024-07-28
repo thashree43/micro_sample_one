@@ -41,35 +41,36 @@ app.post("/post/:id/comments", async (req, res) => {
     res.status(201).send(comments);
 });
 
-    app.post('/events', async(req, res) => {
-        console.log("Event received in comments:", req.body.type);
-        const {type ,data} = req.body
+app.post('/events', async (req, res) => {
+    console.log("Event received in comments:", req.body.type);
+    const { type, data } = req.body;
 
-        if(type === "commentmoderation"){
-            const {postId,id,status,content} = data
-            const comments = commentsByPostId[postId]
+    if (type === "commentmoderation") {
+        const { postId, id, status, content } = data;
+        const comments = commentsByPostId[postId];
 
-            const comment = comments.find(comment =>{
-                return comment.id === id
-            })
+        const comment = comments.find(comment => comment.id === id);
+        if (comment) {
+            comment.status = status;
+        }
 
-            comment.status = status
-            await axios.post("http:/localhost:6995",{
-                type :"commentupdated",
-                postId,
+        await axios.post("http://localhost:6995/events", {
+            type: "commentupdated",
+            data: {
                 id,
-                status,
-                content
-            })
+                content,
+                postId,
+                status
+            }
+        });
 
-                    console.log("after this comment moderation the status be like this ",status);
+        console.log("after this comment moderation the status be like this ", status);
+    }
 
-        } 
-
-        res.send({});
-    });
+    res.send({});
+});
 
 const port = 7004;
 app.listen(port, () => {
-    console.log(`The port is running on http://localhost/${port}`);
+    console.log(`The port is running on http://localhost:${port}`);
 });

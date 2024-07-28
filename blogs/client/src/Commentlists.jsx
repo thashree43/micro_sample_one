@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Commentlists({ comments }) {
-    console.log("The comment list from command list", comments);
-
+    console.log("The comment list from CommentLists:", comments);
+    
     if (!Array.isArray(comments)) {
         comments = [];
     }
@@ -11,17 +11,19 @@ function Commentlists({ comments }) {
         <div>
             <ul>
                 {comments.map(comment => {
-                    let contentToShow;
-
+                    let contentshow;
                     if (comment.status === "rejected") {
-                        contentToShow = "Comment has been rejected";
+                        contentshow = "Comment has been rejected";
                     } else if (comment.status === "pending") {
-                        contentToShow = "The comment is now in pending state";
+                        contentshow = "The comment is now in pending state";
                     } else {
-                        contentToShow = `${comment.content} - ${comment.status}`;
+                        contentshow = (
+                            <li key={comment.id}>
+                                {comment.content} - {comment.status}
+                            </li>
+                        );
                     }
-
-                    return <li key={comment.id}>{contentToShow}</li>;
+                    return contentshow;
                 })}
             </ul>
         </div>
